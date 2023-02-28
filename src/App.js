@@ -1,24 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-let DATA = [
+const DATA = [
   {
     id: 1,
-    title: "Lorem ipsum dolor sit amet consectetur",
+    title: "Make a todo app",
   },
   {
     id: 2,
-    title: "Lorem ipsum dolor sit amet consectetur",
+    title: "Make a calculator app",
   },
 ];
+if (localStorage.getItem("todos") === null) {
+  localStorage.setItem("todos", JSON.stringify(DATA));
+}
 function ListTodos({ title, id, deleteTodo }) {
-  const [isCheck, setIsCheck] = React.useState(false);
+  const [isCheck, setIsCheck] = useState(false);
   return (
     <div className="flex justify-between items-center py-3 border-b">
       <div className="flex gap-10 items-center">
         <input type="checkbox" onClick={() => setIsCheck(!isCheck)} />
-        {isCheck ? <p className="line-through">{title}</p> : <p>{title}</p>}
+        <p className={`${isCheck && "line-through"}`}>{title}</p>
       </div>
       <button
         className="text-red-700 bg-slate-200 rounded-full w-10 h-10 flex justify-center items-center text-base"
@@ -31,8 +34,12 @@ function ListTodos({ title, id, deleteTodo }) {
 }
 
 export default function Todos() {
-  const [data, setData] = React.useState(DATA);
-  const [inputValue, setInputValue] = React.useState();
+  const [data, setData] = useState(JSON.parse(localStorage.getItem("todos")));
+  const [inputValue, setInputValue] = useState("");
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(data));
+    console.log("1");
+  }, [data]);
   function addNewTodo(title) {
     setData((data) => [
       ...data,
@@ -54,7 +61,7 @@ export default function Todos() {
         >
           <input
             type="text"
-            value={inputValue || ""}
+            value={inputValue}
             onChange={(event) => setInputValue(event.target.value)}
             placeholder="add Todos"
             className="w-full outline-none"
