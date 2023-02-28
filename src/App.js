@@ -1,6 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDeleteLeft } from "@fortawesome/free-solid-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 let DATA = [
   {
     id: 1,
@@ -19,8 +20,11 @@ function ListTodos({ title, id, deleteTodo }) {
         <input type="checkbox" onClick={() => setIsCheck(!isCheck)} />
         {isCheck ? <p className="line-through">{title}</p> : <p>{title}</p>}
       </div>
-      <button className="text-red-700" onClick={() => deleteTodo(id)}>
-        <FontAwesomeIcon icon={faDeleteLeft} />
+      <button
+        className="text-red-700 bg-slate-200 rounded-full w-10 h-10 flex justify-center items-center text-base"
+        onClick={() => deleteTodo(id)}
+      >
+        <FontAwesomeIcon icon={faTrash} />
       </button>
     </div>
   );
@@ -57,13 +61,14 @@ export default function Todos() {
           />
           <button
             type="submit"
+            className="bg-blue-700 text-white rounded-full w-10 h-10 flex justify-center items-center text-md"
             onClick={() => {
               if (inputValue) {
                 addNewTodo(inputValue);
               }
             }}
           >
-            Add
+            <FontAwesomeIcon icon={faPlus} />
           </button>
         </form>
         {data?.length === 0 && <p className="text-2xl">No Todos</p>}
