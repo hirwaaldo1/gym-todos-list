@@ -19,7 +19,7 @@ function ListTodos({ title, id, deleteTodo }) {
         <input type="checkbox" onClick={() => setIsCheck(!isCheck)} />
         {isCheck ? <p className="line-through">{title}</p> : <p>{title}</p>}
       </div>
-      <button className="text-red-700" onClick={() => deleteTodo(id)}>
+      <button className="text-red-600" onClick={() => deleteTodo(id)}>
         <FontAwesomeIcon icon={faDeleteLeft} />
       </button>
     </div>
