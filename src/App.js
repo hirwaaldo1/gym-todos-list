@@ -6,22 +6,38 @@ const DATA = [
   {
     id: 1,
     title: "Make a todo app",
+    isCheck: false,
   },
   {
     id: 2,
     title: "Make a calculator app",
+    isCheck: false,
   },
 ];
 if (localStorage.getItem("todos") === null) {
   localStorage.setItem("todos", JSON.stringify(DATA));
 }
-function ListTodos({ title, id, deleteTodo }) {
-  const [isCheck, setIsCheck] = useState(false);
+function ListTodos({ title, id, deleteTodo, isCheck }) {
+  const [isCheckValue, setIsCheckValue] = useState(isCheck);
+  function checkboxCheck() {
+    setIsCheckValue(!isCheckValue);
+    let newData = JSON.parse(localStorage.getItem("todos")).map((item) => {
+      if (item.id === id) {
+        item.isCheck = !item.isCheck;
+      }
+      return item;
+    });
+    localStorage.setItem("todos", JSON.stringify(newData));
+  }
   return (
     <div className="flex justify-between items-center py-3 border-b">
       <div className="flex gap-10 items-center">
-        <input type="checkbox" onClick={() => setIsCheck(!isCheck)} />
-        <p className={`${isCheck && "line-through"}`}>{title}</p>
+        <input
+          type="checkbox"
+          checked={isCheckValue}
+          onChange={checkboxCheck}
+        />
+        <p className={`${isCheckValue && "line-through"}`}>{title}</p>
       </div>
       <button
         className="text-red-700 bg-slate-200 rounded-full w-10 h-10 flex justify-center items-center text-base"
@@ -38,12 +54,11 @@ export default function Todos() {
   const [inputValue, setInputValue] = useState("");
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(data));
-    console.log("1");
   }, [data]);
   function addNewTodo(title) {
     setData((data) => [
       ...data,
-      { id: data[data.length - 1]?.id + 1 || 1, title: title },
+      { id: data[data.length - 1]?.id + 1 || 1, title: title, isCheck: false },
     ]);
     setInputValue("");
   }
