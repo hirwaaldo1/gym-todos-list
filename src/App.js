@@ -1,38 +1,64 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDeleteLeft } from "@fortawesome/free-solid-svg-icons";
-let DATA = [
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+const DATA = [
   {
     id: 1,
-    title: "Lorem ipsum dolor sit amet consectetur",
+    title: "Make a todo app",
+    isCheck: false,
   },
   {
     id: 2,
-    title: "Lorem ipsum dolor sit amet consectetur",
+    title: "Make a calculator app",
+    isCheck: false,
   },
 ];
-function ListTodos({ title, id, deleteTodo }) {
-  const [isCheck, setIsCheck] = React.useState(false);
+if (localStorage.getItem("todos") === null) {
+  localStorage.setItem("todos", JSON.stringify(DATA));
+}
+function ListTodos({ title, id, deleteTodo, isCheck }) {
+  const [isCheckValue, setIsCheckValue] = useState(isCheck);
+  function checkboxCheck() {
+    setIsCheckValue(!isCheckValue);
+    let newData = JSON.parse(localStorage.getItem("todos")).map((item) => {
+      if (item.id === id) {
+        item.isCheck = !item.isCheck;
+      }
+      return item;
+    });
+    localStorage.setItem("todos", JSON.stringify(newData));
+  }
   return (
     <div className="flex justify-between items-center py-3 border-b">
       <div className="flex gap-10 items-center">
-        <input type="checkbox" onClick={() => setIsCheck(!isCheck)} />
-        {isCheck ? <p className="line-through">{title}</p> : <p>{title}</p>}
+        <input
+          type="checkbox"
+          checked={isCheckValue}
+          onChange={checkboxCheck}
+        />
+        <p className={`${isCheckValue && "line-through"}`}>{title}</p>
       </div>
-      <button className="text-red-600" onClick={() => deleteTodo(id)}>
-        <FontAwesomeIcon icon={faDeleteLeft} />
+      <button
+        className="text-red-700 bg-slate-200 rounded-full w-10 h-10 flex justify-center items-center text-base"
+        onClick={() => deleteTodo(id)}
+      >
+        <FontAwesomeIcon icon={faTrash} />
       </button>
     </div>
   );
 }
 
 export default function Todos() {
-  const [data, setData] = React.useState(DATA);
-  const [inputValue, setInputValue] = React.useState();
+  const [data, setData] = useState(JSON.parse(localStorage.getItem("todos")));
+  const [inputValue, setInputValue] = useState("");
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(data));
+  }, [data]);
   function addNewTodo(title) {
     setData((data) => [
       ...data,
-      { id: data[data.length - 1]?.id + 1 || 1, title: title },
+      { id: data[data.length - 1]?.id + 1 || 1, title: title, isCheck: false },
     ]);
     setInputValue("");
   }
@@ -50,20 +76,21 @@ export default function Todos() {
         >
           <input
             type="text"
-            value={inputValue || ""}
+            value={inputValue}
             onChange={(event) => setInputValue(event.target.value)}
             placeholder="add Todos"
             className="w-full outline-none"
           />
           <button
             type="submit"
+            className="bg-blue-700 text-white rounded-full w-10 h-10 flex justify-center items-center text-md"
             onClick={() => {
               if (inputValue) {
                 addNewTodo(inputValue);
               }
             }}
           >
-            Add
+            <FontAwesomeIcon icon={faPlus} />
           </button>
         </form>
         {data?.length === 0 && <p className="text-2xl">No Todos</p>}
